@@ -50,7 +50,8 @@ jobs:
           view_top: 1
 
       - name: Prepare build
-        run: |
+        run: | 
+          set -e
 
           commit_count=$(git rev-list --count HEAD)
           echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
