@@ -1,4 +1,4 @@
-name: Build job
+name: Build app
 
 on:
   # Every Friday at 21:00 UTC
