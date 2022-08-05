@@ -52,7 +52,16 @@ jobs:
       - name: Get commit count
         run:  |
           set -e
-          echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+          current_sha=$(git rev-parse --short HEAD)
+          echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
+          
+          prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
+          commit_count_diff=$(expr $commit_count - $prev_commit_count)
+          prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
+          echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -92,7 +101,9 @@ jobs:
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Cloudstream r${{ env.COMMIT_COUNT }}
-          body: Pre-release
+          body: |
+            Pre-release
+            https://github.com/tachiyomiorg/tachiyomi/compare/${{ env.PREV_RELEASE_SHA }}...${{ env.CURRENT_SHA }}
           files: |
             Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           draft: ${{ github.event.inputs.dry-run != '' }}
