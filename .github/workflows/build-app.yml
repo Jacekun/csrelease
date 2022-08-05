@@ -52,7 +52,7 @@ jobs:
       - name: Get commit count
         run:  |
           set -e
-          echo "COMMIT_COUNT=$(git rev-list --count javdev)" >> $GITHUB_ENV
+          echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -81,6 +81,12 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           
+      - name: Clean up build artifacts
+        run: |
+          set -e
+          
+          cp app/build/outputs/apk/prerelease/app-prerelease.apk Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
+          
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
@@ -88,7 +94,7 @@ jobs:
           name: Cloudstream r${{ env.COMMIT_COUNT }}
           body: Pre-release
           files: |
-            app/build/outputs/apk/prerelease/*.apk
+            Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           draft: ${{ github.event.inputs.dry-run != '' }}
           prerelease: false
         env:
