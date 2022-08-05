@@ -52,15 +52,12 @@ jobs:
       - name: Get commit count
         run:  |
           set -e
+          echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          echo "CURRENT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           
-          commit_count=$(git rev-list --count HEAD)
-          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
-          current_sha=$(git rev-parse --short HEAD)
-          echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
-          
-          prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
-          commit_count_diff=$(expr $commit_count - $prev_commit_count)
-          prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
+          $prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
+          $commit_count_diff=$(expr ${{ env.COMMIT_COUNT }} - $prev_commit_count)
+          $prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
           echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
