@@ -76,8 +76,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Set checks for prerelease updates to true by default
-      run: |
-        sed -i "s/R\.string\.prerelease_update_key), false))/R\.string\.prerelease_update_key), true))/" app/src/main/java/com/lagradost/cloudstream3/utils/InAppUpdater.kt
+        run: |
+          sed -i "s/R\.string\.prerelease_update_key), false))/R\.string\.prerelease_update_key), true))/" app/src/main/java/com/lagradost/cloudstream3/utils/InAppUpdater.kt
       - name: Update prerelease_commit_hash
         run: |
           COMMIT_HASH="$(git log -1 --format='%H')"
