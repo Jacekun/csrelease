@@ -48,6 +48,11 @@ jobs:
           myToken: ${{ github.token }}
           exclude_types: "draft|prerelease"
           view_top: 1
+          
+      - name: Get commit count
+        run:  |
+          set -e
+          echo "COMMIT_COUNT=$(git rev-list --count javdev)" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -68,26 +73,6 @@ jobs:
           TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
           mkdir -p "${TMP_KEYSTORE_FILE_PATH}"
           echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.keystore
-
-      - name: Prepare build
-        run: |
-          set -e
-          
-          commit_count=$(git rev-list --count HEAD)
-          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
-          current_sha=$(git rev-parse --short HEAD)
-          echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
-          
-          prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
-          commit_count_diff=$(expr $commit_count - $prev_commit_count)
-          prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
-          echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
-          
-          echo "COMMIT_LOGS<<{delimiter}
-          $(curl -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/tachiyomiorg/tachiyomi/compare/$prev_release_sha...$current_sha" \
-            | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
-            | jq -r '.[]|"- \(.message | first) (@\(.username))"')" >> $GITHUB_ENV
           
       - name: Run Gradle
         run: ./gradlew app:assemblePrerelease
@@ -96,27 +81,14 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           
-      - name: Clean up build artifacts
-        run: |
-          set -e
-
-          cp app/build/outputs/apk/prerelease/*.apk Cloudstream-r${{ env.COMMIT_COUNT }}.apk
-
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
-          name: Cloudstream Preview r${{ env.COMMIT_COUNT }}
-          body: |
-            ### Commits
-
-            https://github.com/reduplicated/Cloudstream/compare/${{ env.PREV_RELEASE_SHA }}...${{ env.CURRENT_SHA }}
-
-            ${{ env.COMMIT_LOGS }}
-
-            ---
+          name: Cloudstream r${{ env.COMMIT_COUNT }}
+          body: Pre-release
           files: |
-            Cloudstream-r${{ env.COMMIT_COUNT }}.apk
+            app/build/outputs/apk/prerelease/*.apk
           draft: ${{ github.event.inputs.dry-run != '' }}
           prerelease: false
         env:
