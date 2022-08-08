@@ -50,28 +50,16 @@ jobs:
           exclude_types: "draft|prerelease"
           view_top: 1
           
-      - name: Get current commit count
+      - name: Get current commit count, and count from previous commit
         run:  |
           set -e
           commit_count=$(git rev-list --count HEAD)
           echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
           echo "CURRENT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      
-      - name: Get commit count diff from previous release hash
-        run:  |
-          set -e
           
           prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
           
-          commit_count_diff=$(expr ${{ env.COMMIT_COUNT }} - $prev_commit_count)
-          echo "COMMIT_COUNT_DIFF=$commit_count_diff" >> $GITHUB_ENV
-      
-      - name: Log environment variabls
-        run: |
-          set -e
-          
-          echo "Current commit count: ${{ env.COMMIT_COUNT }}"
-          echo "Commit count difference: ${{ env.COMMIT_COUNT_DIFF }}"
+          echo "COMMIT_COUNT_DIFF=$(expr $commit_count - $prev_commit_count)" >> $GITHUB_ENV
         
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1
