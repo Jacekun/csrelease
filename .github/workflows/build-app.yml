@@ -64,7 +64,7 @@ jobs:
           
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1
-        run: exit 1
+        run: exit 100
         
       - name: Get previous commit count, and set up commit logs
         if: env.COMMIT_COUNT_DIFF > 0
