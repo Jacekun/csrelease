@@ -62,6 +62,9 @@ jobs:
           commit_count_diff=$(expr $commit_count - $prev_commit_count)
           echo "COMMIT_COUNT_DIFF=$commit_count_diff" >> $GITHUB_ENV
           
+          echo "Current commit count: ${{ env.COMMIT_COUNT }}"
+          echo "$Commit count difference: {{ env.COMMIT_COUNT_DIFF }}"
+          
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1
         run: exit 100
