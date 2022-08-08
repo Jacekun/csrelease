@@ -59,7 +59,7 @@ jobs:
           
           prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
           
-          echo "COMMIT_COUNT_DIFF=$(expr $commit_count - $prev_commit_count)" >> $GITHUB_ENV
+          echo "COMMIT_COUNT_DIFF=$(($commit_count - $prev_commit_count))" >> $GITHUB_ENV
         
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1
