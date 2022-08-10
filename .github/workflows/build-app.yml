@@ -14,6 +14,9 @@ on:
       dry-run:
         description: Creates a draft release
         required: false
+      first-run:
+        description: First release
+        required: false
 
 env:
   REPO_NAME: recloudstream/cloudstream
@@ -52,8 +55,19 @@ jobs:
           myToken: ${{ github.token }}
           exclude_types: "draft|prerelease"
           view_top: 1
+      
+      - name: Get commit count for first release
+        if: github.event.inputs.first-run == 'true'
+        run:  |
+          set -e
+          commit_count=$(git rev-list --count HEAD)
+          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
+          echo "CURRENT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          
+          echo "COMMIT_COUNT_DIFF=0" >> $GITHUB_ENV
           
       - name: Get current commit count, and count from previous commit
+        if: github.event.inputs.first-run == ''
         run:  |
           set -e
           commit_count=$(git rev-list --count HEAD)
@@ -65,11 +79,11 @@ jobs:
           echo "COMMIT_COUNT_DIFF=$(($commit_count - $prev_commit_count))" >> $GITHUB_ENV
         
       - name: Exit if there are no new commits since last release
-        if: env.COMMIT_COUNT_DIFF < 1
+        if: env.COMMIT_COUNT_DIFF < 1 && github.event.inputs.first-run == ''
         run: exit 100
         
       - name: Get previous commit count, and set up commit logs
-        if: env.COMMIT_COUNT_DIFF > 0
+        if: env.COMMIT_COUNT_DIFF > 0 && github.event.inputs.first-run == ''
         run:  |
           set -e
           
@@ -123,7 +137,26 @@ jobs:
           mylist=($(find app/build/outputs/apk/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
+      - name: Create first release
+        if: github.event.inputs.first-run == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: r${{ env.COMMIT_COUNT }}
+          name: Cloudstream r${{ env.COMMIT_COUNT }}
+          body: |
+            # First pre-release
+            
+            https://github.com/${{ env.REPO_NAME }}/tree/${{ env.CURRENT_SHA }}
+            
+          files: |
+            Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
+          draft: ${{ github.event.inputs.dry-run != '' }}
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Create release
+        if: github.event.inputs.first-run == ''
         uses: softprops/action-gh-release@v1
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
