@@ -1,3 +1,3 @@
 # csrelease
 
-reduplicated/Cloudstream
+Cloudstream
