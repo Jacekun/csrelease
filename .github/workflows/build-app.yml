@@ -15,6 +15,9 @@ on:
         description: Creates a draft release
         required: false
 
+env:
+  REPO_NAME: recloudstream/cloudstream
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +33,7 @@ jobs:
       - name: Clone Repository (Latest)
         uses: actions/checkout@v3
         with:
-          repository: 'reduplicated/Cloudstream'
+          repository: env.REPO_NAME
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
 
@@ -38,7 +41,7 @@ jobs:
         uses: actions/checkout@v3
         if: github.event.inputs.git-ref != ''
         with:
-          repository: 'reduplicated/Cloudstream'
+          repository: env.REPO_NAME
           fetch-depth: 0
           ref: ${{ github.event.inputs.git-ref }}
 
@@ -78,7 +81,7 @@ jobs:
           
           echo "COMMIT_LOGS<<{delimiter}
           $(curl -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/reduplicated/Cloudstream/compare/$prev_release_sha...$current_sha" \
+            "https://api.github.com/repos/${{ env.REPO_NAME }}/compare/$prev_release_sha...$current_sha" \
             | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
@@ -124,7 +127,7 @@ jobs:
           body: |
             # Pre-release
             
-            https://github.com/reduplicated/Cloudstream/compare/${{ env.PREV_RELEASE_SHA }}...${{ env.CURRENT_SHA }}
+            https://github.com/${{ env.REPO_NAME }}/compare/${{ env.PREV_RELEASE_SHA }}...${{ env.CURRENT_SHA }}
             
             ${{ env.COMMIT_LOGS }}
             
