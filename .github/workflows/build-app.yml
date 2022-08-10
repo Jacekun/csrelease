@@ -20,6 +20,7 @@ on:
 
 env:
   REPO_NAME: recloudstream/cloudstream
+  RUN_BUILD: 'true'
 
 jobs:
   build:
@@ -49,6 +50,7 @@ jobs:
           ref: ${{ github.event.inputs.git-ref }}
 
       - name: Get previous release
+        if: github.event.inputs.first-run == ''
         id: last_release
         uses: InsonusK/get-latest-release@v1.0.1
         with:
@@ -80,10 +82,13 @@ jobs:
         
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1 && github.event.inputs.first-run == ''
-        run: exit 100
+        run:  |
+          set -e
+          
+          echo "RUN_BUILD='false'" >> $GITHUB_ENV
         
       - name: Get previous commit count, and set up commit logs
-        if: env.COMMIT_COUNT_DIFF > 0 && github.event.inputs.first-run == ''
+        if: env.RUN_BUILD == 'true'
         run:  |
           set -e
           
@@ -101,18 +106,22 @@ jobs:
           {delimiter}" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
+        if: env.RUN_BUILD == 'true'
         run: chmod +x gradlew
 
       - name: Set checks for prerelease updates to true by default
+        if: env.RUN_BUILD == 'true'
         run: |
           sed -i "s/R\.string\.prerelease_update_key), false))/R\.string\.prerelease_update_key), true))/" app/src/main/java/com/lagradost/cloudstream3/utils/InAppUpdater.kt
       
       - name: Update prerelease_commit_hash
+        if: env.RUN_BUILD == 'true'
         run: |
           COMMIT_HASH="$(git log -1 --format='%H')"
           sed -i "s/<string name=\"prerelease_commit_hash\" translatable=\"false\">unknown_prerelease<\/string>/<string name=\"prerelease_commit_hash\">$COMMIT_HASH<\/string>/g" app/src/main/res/values/strings.xml
       
       - name: Decode Keystore
+        if: env.RUN_BUILD == 'true'
         env:
           ENCODED_STRING: ${{ secrets.KEYSTORE }}
         run: |
@@ -121,6 +130,7 @@ jobs:
           echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/prerelease_keystore.keystore
           
       - name: Run Gradle
+        if: env.RUN_BUILD == 'true'
         run: |
           ./gradlew assembleDebug
           ./gradlew androidSourcesJar
@@ -131,6 +141,7 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           
       - name: Clean up build artifacts
+        if: env.RUN_BUILD == 'true'
         run: |
           set -e
           
@@ -156,7 +167,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Create release
-        if: github.event.inputs.first-run == ''
+        if: env.RUN_BUILD == 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
