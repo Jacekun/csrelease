@@ -117,7 +117,8 @@ jobs:
         run: |
           set -e
           
-          cp app/build/outputs/apk/prerelease/app-prerelease.apk Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
+          mylist=($(find app/build/outputs/apk/ -type f -name "*.apk"))
+          cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
       - name: Create release
         uses: softprops/action-gh-release@v1
