@@ -82,10 +82,7 @@ jobs:
         
       - name: Exit if there are no new commits since last release
         if: env.COMMIT_COUNT_DIFF < 1 && github.event.inputs.first-run == ''
-        run:  |
-          set -e
-          
-          echo "RUN_BUILD='false'" >> $GITHUB_ENV
+        run: exit 0
         
       - name: Get previous commit count, and set up commit logs
         if: env.RUN_BUILD == 'true'
