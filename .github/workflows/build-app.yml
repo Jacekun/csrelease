@@ -145,7 +145,7 @@ jobs:
         run: |
           set -e
           
-          mylist=($(find app/build/outputs/apk/ -type f -name "*.apk"))
+          mylist=($(find app/build/outputs/apk/debug/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
       - name: Create first release
