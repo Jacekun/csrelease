@@ -133,7 +133,7 @@ jobs:
       - name: Run Gradle
         if: env.RUN_BUILD == 'true'
         run: |
-          ./gradlew assembleDebug
+          ./gradlew assemblePrerelease
           ./gradlew androidSourcesJar
           ./gradlew makeJar
         env:
@@ -146,7 +146,7 @@ jobs:
         run: |
           set -e
           
-          mylist=($(find app/build/outputs/apk/debug/ -type f -name "*.apk"))
+          mylist=($(find app/build/outputs/apk/prerelease/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
       - name: Create first release
