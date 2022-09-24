@@ -105,6 +105,11 @@ jobs:
             | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
+        
+      - name: Update package name
+        if: env.RUN_BUILD == 'true'
+        run: |
+          python3 changename.py
 
       - name: Grant execute permission for gradlew
         if: env.RUN_BUILD == 'true'
