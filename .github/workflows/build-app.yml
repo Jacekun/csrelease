@@ -37,8 +37,6 @@ jobs:
       - name: Clone Repository (This)
         uses: actions/checkout@v3
         with:
-          repository: '${{ github.repository }}'
-          fetch-depth: 0
           path: main
 
       - name: Clone Repository (Latest)
