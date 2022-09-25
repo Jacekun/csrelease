@@ -33,6 +33,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          
+      - name: Clone Repository (This)
+        uses: actions/checkout@v3
+        with:
+          repository: 'Jacekun/csrelease'
+          fetch-depth: 0
 
       - name: Clone Repository (Latest)
         uses: actions/checkout@v3
