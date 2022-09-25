@@ -39,7 +39,6 @@ jobs:
         with:
           repository: '${{ env.REPO_NAME }}'
           fetch-depth: 0
-          path: main
         if: github.event.inputs.git-ref == ''
 
       - name: Clone Repository (Custom Ref)
@@ -49,12 +48,15 @@ jobs:
           repository: '${{ env.REPO_NAME }}'
           fetch-depth: 0
           ref: ${{ github.event.inputs.git-ref }}
-          path: main
           
       - name: Clone Repository (This)
         uses: actions/checkout@v3
         with:
-          path: main
+          path: './res
+
+      - name: Move script file
+        run: |
+          cp ./res/changename.py .
 
       - name: Get previous release
         if: github.event.inputs.first-run == ''
