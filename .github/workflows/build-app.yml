@@ -112,6 +112,14 @@ jobs:
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
         
+      - name: List files
+        uses: mirko-felice/list-files-action@v3.0.1
+        with:
+          repo: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          path: "."
+          ext: ".py"
+        
       - name: Update package name
         if: env.RUN_BUILD == 'true'
         run: |
