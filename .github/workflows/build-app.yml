@@ -110,9 +110,8 @@ jobs:
         uses: mirko-felice/list-files-action@v3.0.1
         with:
           repo: ${{ github.repository }}
-          ref: ${{ github.ref }}
           path: "./"
-          ext: ".gradle"
+          ext: ".*"
         
       - name: Update package name
         if: env.RUN_BUILD == 'true'
