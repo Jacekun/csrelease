@@ -111,7 +111,7 @@ jobs:
         with:
           repo: ${{ github.repository }}
           ref: ${{ github.ref }}
-          path: "."
+          path: "./"
           ext: ".gradle"
         
       - name: Update package name
