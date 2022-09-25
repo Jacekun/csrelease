@@ -123,7 +123,7 @@ jobs:
       - name: Update package name
         if: env.RUN_BUILD == 'true'
         run: |
-          python3 changename.py
+          python3 ./changename.py
 
       - name: Grant execute permission for gradlew
         if: env.RUN_BUILD == 'true'
