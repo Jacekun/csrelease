@@ -33,12 +33,20 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      
+      - name: Clone Repository (This)
+        uses: actions/checkout@v3
+        with:
+          repository: '${{ github.repository }}'
+          fetch-depth: 0
+          path: main
 
       - name: Clone Repository (Latest)
         uses: actions/checkout@v3
         with:
           repository: '${{ env.REPO_NAME }}'
           fetch-depth: 0
+          path: main
         if: github.event.inputs.git-ref == ''
 
       - name: Clone Repository (Custom Ref)
@@ -48,6 +56,7 @@ jobs:
           repository: '${{ env.REPO_NAME }}'
           fetch-depth: 0
           ref: ${{ github.event.inputs.git-ref }}
+          path: main
 
       - name: Get previous release
         if: github.event.inputs.first-run == ''
