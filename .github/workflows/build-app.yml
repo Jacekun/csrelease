@@ -118,7 +118,7 @@ jobs:
           repo: ${{ github.repository }}
           ref: ${{ github.ref }}
           path: "."
-          ext: ".py"
+          ext: ".gradle"
         
       - name: Update package name
         if: env.RUN_BUILD == 'true'
