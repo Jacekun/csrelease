@@ -147,9 +147,7 @@ jobs:
       - name: Run Gradle
         if: env.RUN_BUILD == 'true'
         run: |
-          ./gradlew assemblePrerelease
-          ./gradlew androidSourcesJar
-          ./gradlew makeJar
+          ./gradlew assembleRelease androidSourcesJar makeJar
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -160,7 +158,7 @@ jobs:
         run: |
           set -e
           
-          mylist=($(find app/build/outputs/apk/prerelease/ -type f -name "*.apk"))
+          mylist=($(find app/build/outputs/apk/release/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
       - name: Create first release
