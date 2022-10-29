@@ -160,6 +160,7 @@ jobs:
           
           mylist=($(find app/build/outputs/apk/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
+          printf '%s\n' "${mylist[@]}"
           
       - name: Create first release
         if: github.event.inputs.first-run == 'true'
