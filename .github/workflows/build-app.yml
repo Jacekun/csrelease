@@ -54,7 +54,7 @@ jobs:
         with:
           path: './res'
 
-      - name: Move script file
+      - name: Run script to change package name
         run: |
           cp ./res/changename.py .
 
@@ -158,7 +158,7 @@ jobs:
         run: |
           set -e
           
-          mylist=($(find app/build/outputs/apk/release/ -type f -name "*.apk"))
+          mylist=($(find app/build/outputs/apk/ -type f -name "*.apk"))
           cp ${mylist[0]} Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
           
       - name: Create first release
