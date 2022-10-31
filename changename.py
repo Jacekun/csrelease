@@ -2,7 +2,7 @@
 import re
 import os
 
-path: str = os.path.join(".", "app", "build.gradle")
+path: str = os.path.join(".", "app", "build.gradle.kts")
 text: str = ""
 newAppPackage: str = "com.lagradost.cloudstream3xxx"
 findAppId: str = "(?<=applicationId \")(.*?)(?=\")"
