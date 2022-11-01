@@ -5,7 +5,7 @@ import os
 path: str = os.path.join(".", "app", "build.gradle.kts")
 text: str = ""
 newAppPackage: str = "com.lagradost.cloudstream3xxx"
-findAppId: str = "(?<=applicationId \")(.*?)(?=\")"
+findAppId: str = "(?<=applicationId = \")(.*?)(?=\")"
 
 try:
     print("Checking file..")
