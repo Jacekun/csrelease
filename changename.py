@@ -4,7 +4,7 @@ import os
 
 #File paths
 pathBuildGradle: str = os.path.join(".", "app", "build.gradle.kts")
-pathStringRes: str = os.path.join(".", "app", "src", "main", "res", "values", "strings.xml")
+pathStringRes: str = os.path.join(".", "app", "src", "prerelease", "res", "values", "strings.xml")
 
 # Regex to find old string
 findAppId: str = "(?<=applicationId = \")(.*?)(?=\")"
