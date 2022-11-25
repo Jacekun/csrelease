@@ -195,7 +195,7 @@ jobs:
             ${{ env.COMMIT_LOGS }}
             
           files: |
-            Cloudstream3-r${{ env.COMMIT_COUNT }}.apk
+            CloudstreamXXX-r${{ env.COMMIT_COUNT }}.apk
             app/build/libs/app-sources.jar
             app/build/classes.jar
             
