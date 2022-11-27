@@ -21,6 +21,7 @@ on:
 env:
   REPO_NAME: recloudstream/cloudstream
   RUN_BUILD: 'true'
+  APK_NAME: CloudstreamXXX.apk
 
 jobs:
   build:
@@ -114,6 +115,8 @@ jobs:
             | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
+          
+          echo "APK_NAME=CloudstreamXXX-r${{ env.COMMIT_COUNT }}.apk" >> $GITHUB_ENV
         
       - name: Update package name
         if: env.RUN_BUILD == 'true'
@@ -160,7 +163,7 @@ jobs:
           
           allapk=($(find app/build/outputs/apk/ -type f -name "*.apk"))
           mylist=($(find app/build/outputs/apk/prerelease/release/ -type f -name "*.apk"))
-          cp ${mylist[0]} CloudstreamXXX-r${{ env.COMMIT_COUNT }}.apk
+          cp ${mylist[0]} ${{ env.APK_NAME }}
           printf '%s\n' "${allapk[@]}"
           
       - name: Create first release
@@ -195,7 +198,7 @@ jobs:
             ${{ env.COMMIT_LOGS }}
             
           files: |
-            CloudstreamXXX-r${{ env.COMMIT_COUNT }}.apk
+            ${{ env.APK_NAME }}
             app/build/libs/app-sources.jar
             app/build/classes.jar
             
