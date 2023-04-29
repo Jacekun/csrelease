@@ -3,7 +3,7 @@ name: Build job
 on:
   # Everyday starting at 02:00 UTC
   schedule:
-    - cron: '0 2,10,23 * * *'
+    - cron: '0 2 * * 5'
     
   # Manual triggers
   workflow_dispatch:
