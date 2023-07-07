@@ -22,6 +22,7 @@ env:
   REPO_NAME: recloudstream/cloudstream
   RUN_BUILD: 'true'
   APK_NAME: CloudstreamXXX.apk
+  REPO_BRANCH: master
 
 jobs:
   build:
@@ -40,6 +41,7 @@ jobs:
         with:
           repository: '${{ env.REPO_NAME }}'
           fetch-depth: 0
+          ref: '${{ env.REPO_BRANCH }}'
         if: github.event.inputs.git-ref == ''
 
       - name: Clone Repository (Custom Ref)
