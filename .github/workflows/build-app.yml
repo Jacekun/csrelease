@@ -1,9 +1,9 @@
 name: Build job
 
 on:
-  # Everyday starting at 02:00 UTC
+  # Every 'n' days starting at 02:00 UTC
   schedule:
-    - cron: '0 2 * * 5'
+    - cron: '0 2 * * 4'
     
   # Manual triggers
   workflow_dispatch:
