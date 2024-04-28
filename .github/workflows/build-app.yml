@@ -152,8 +152,7 @@ jobs:
       - name: Run Gradle
         if: env.RUN_BUILD == 'true'
         run: |
-          ./gradlew assemblePrerelease 
-          ./gradlew androidSourcesJar
+          ./gradlew assemblePrerelease build androidSourcesJar
           ./gradlew makeJar # for classes.jar, has to be done after assemblePrerelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
